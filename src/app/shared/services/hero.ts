@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable } from '@angular/core';
+import { computed, inject, Injectable, signal } from '@angular/core';
 import { BehaviorSubject, catchError, Observable, tap, throwError } from 'rxjs';
 import { HeroInterface, Powerstat } from '../interfaces/hero.interface';
 import { HeroServiceAbstract } from './hero.abstract';
@@ -8,13 +8,13 @@ import { HeroServiceAbstract } from './hero.abstract';
   providedIn: 'root',
 })
 export class Hero extends HeroServiceAbstract {
-  private readonly heroesSubject = new BehaviorSubject<HeroInterface[]>([]);
-  public readonly heroes$ = this.heroesSubject.asObservable();
   private readonly httpClient = inject(HttpClient);
+  private readonly heroSignal = signal<HeroInterface[]>([]);
+  public readonly heroes = computed(() => this.heroSignal());
 
   load(): Observable<{ heroes: HeroInterface[]; total: number }> {
     return this.httpClient.get<{ heroes: HeroInterface[]; total: number }>(this.baseUrl).pipe(
-      tap((result) => this.heroesSubject.next(result.heroes)),
+      tap((result) => this.heroSignal.set(result.heroes)),
       catchError((error) => {
         console.error('Error loading heroes:', error);
         return throwError(() => error);
@@ -25,8 +25,7 @@ export class Hero extends HeroServiceAbstract {
   add(hero: HeroInterface) {
     return this.httpClient.post<HeroInterface>(this.baseUrl, hero).pipe(
       tap((newHero) => {
-        const currentHeroes = this.heroesSubject.getValue();
-        this.heroesSubject.next([...currentHeroes, newHero]);
+        this.heroSignal.update((currentHeroes) => [...currentHeroes, newHero]);
       }),
       catchError((error) => {
         console.error('Error adding hero:', error);
@@ -38,11 +37,11 @@ export class Hero extends HeroServiceAbstract {
   update(heroUpdate: HeroInterface): Observable<HeroInterface> {
     return this.httpClient.put<HeroInterface>(`${this.baseUrl}/${heroUpdate.id}`, heroUpdate).pipe(
       tap((updatedHero) => {
-        const currentHeroes = this.heroesSubject.getValue();
+        const currentHeroes = this.heroSignal();
         const updatedHeroes = currentHeroes.map((hero) =>
           hero.id === updatedHero.id ? updatedHero : hero,
         );
-        this.heroesSubject.next(updatedHeroes);
+        this.heroSignal.update(() => updatedHeroes);
       }),
       catchError((error) => {
         console.error('Error updating hero:', error);
@@ -65,8 +64,8 @@ export class Hero extends HeroServiceAbstract {
   remove(hero: HeroInterface): Observable<void> {
     return this.httpClient.delete<void>(`${this.baseUrl}/${hero.id}`).pipe(
       tap(() => {
-        const removeHero = this.heroesSubject.getValue().filter((_hero) => hero.id !== hero.id);
-        this.heroesSubject.next(removeHero);
+        const removeHero = this.heroSignal().filter((_hero) => hero.id !== hero.id);
+        this.heroSignal.update(() => removeHero);
       }),
       catchError((error) => {
         console.error('Error removing hero:', error);
@@ -86,7 +85,7 @@ export class Hero extends HeroServiceAbstract {
 
   findAll(): Observable<{ heroes: HeroInterface[]; total: number }> {
     return this.httpClient.get<{ heroes: HeroInterface[]; total: number }>(this.baseUrl).pipe(
-      tap((result) => this.heroesSubject.next(result.heroes)),
+      tap((result) => this.heroSignal.set(result.heroes)),
       catchError((error) => {
         console.error('Error finding all heroes:', error);
         return throwError(() => error);

@@ -7,18 +7,17 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
-  imports: [HeroList, AsyncPipe],
+  imports: [HeroList],
   template: `
-    @let heroes = heroes$ | async;
-    @if (heroes) {
-      <app-hero-list [heroes]="heroes" />
+    @if (heroes()) {
+      <app-hero-list [heroes]="heroes()" />
     }
   `,
 })
 export class Home {
   private readonly heroService = inject(Hero);
   private readonly destroyRef$ = inject(DestroyRef);
-  heroes$ = this.heroService.heroes$;
+  heroes = this.heroService.heroes;
 
   constructor() {
     this.heroService.load().pipe(takeUntilDestroyed(this.destroyRef$)).subscribe();
