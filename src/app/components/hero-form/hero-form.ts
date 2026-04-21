@@ -71,11 +71,9 @@ export class HeroForm {
     } else {
       const hero: HeroInterface = {
         ...this.heroForm().value,
-        id: this.hero().id,
         powerstats: { ...this.heroForm().value.powerstats },
       };
       this.add.emit(hero);
-      console.log('Hero added:', hero);
     }
   }
 }

@@ -20,7 +20,7 @@ export class HeroService {
   add(hero: Hero): Hero {
     const id = hero.id || this.fakeID++;
     const newHero = { ...hero, id };
-    this.heroes.push(newHero);
+    this.heroes.unshift(newHero);
     return newHero;
   }
 

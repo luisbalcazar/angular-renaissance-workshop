@@ -1,9 +1,10 @@
-import { Component, DestroyRef, inject, input } from '@angular/core';
+import { Component, DestroyRef, inject, input, output } from '@angular/core';
 import { HeroItem } from '../hero-item/hero-item';
 import { HeroInterface } from '../../shared/interfaces/hero.interface';
 import { HeroPowerstatsChange } from '../../shared/interfaces/hero-powerstats-change.interface';
 import { Hero } from '../../shared/services/hero';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-hero-list',
@@ -13,8 +14,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
       @for (hero of heroes(); track hero.id) {
         <app-hero-item
           [hero]="hero"
-          (powerstatsChange)="savePowerstat($event)"
-          (removeHero)="removeHero($event)"
+          (powerstatsChange)="powerstatsChange.emit($event)"
+          (removeHero)="removeHero.emit($event)"
         />
       } @empty {
         <h1>There are no heroes</h1>
@@ -24,28 +25,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class HeroList {
   public heroes = input<HeroInterface[]>();
-  private readonly heroService = inject(Hero);
-  private readonly destroyRef = inject(DestroyRef);
-
-  savePowerstat({ hero, powerstat, value }: HeroPowerstatsChange) {
-    this.heroService
-      .updatePowerstat(hero, powerstat, value)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (updatedHero) => console.log('Powerstat updated successfully:', updatedHero),
-        error: (error) => console.error('Error updating powerstat: ', error),
-        complete: () => console.log('Update powerstat operation completed'),
-      });
-  }
-
-  removeHero(hero: HeroInterface) {
-    this.heroService
-      .remove(hero)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: () => console.log('Hero removed successfully'),
-        error: (error) => console.error('Error removing hero: ', error),
-        complete: () => console.log('Remove hero operation completed'),
-      });
-  }
+  powerstatsChange = output<HeroPowerstatsChange>();
+  removeHero = output<HeroInterface>();
 }

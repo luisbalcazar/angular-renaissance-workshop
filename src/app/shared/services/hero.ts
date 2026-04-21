@@ -75,6 +75,7 @@ export class Hero extends HeroServiceAbstract {
   }
 
   findOne(id: number): Observable<HeroInterface> {
+    console.log(id);
     return this.httpClient.get<HeroInterface>(`${this.baseUrl}/${id}`).pipe(
       catchError((error) => {
         console.error('Error finding hero:', error);

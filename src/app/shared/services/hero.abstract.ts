@@ -5,7 +5,7 @@ export abstract class HeroServiceAbstract {
   protected readonly baseUrl = 'http://localhost:9000/heroes';
 
   readonly defaultHero: HeroInterface = {
-    id: Math.floor(Math.random() * 10000),
+    id: Math.floor(Math.random() * 10000) + 1000,
     name: 'Joker',
     powerstats: {
       intelligence: 100,
