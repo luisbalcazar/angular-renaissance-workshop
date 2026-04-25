@@ -1,0 +1,44 @@
+<h3 class="mb-2">{{ message }}</h3>
+<div class="form-group">
+  <form (ngSubmit)="login()" [formGroup]="loginFormGroup">
+    <div class="input-group">
+      <label for="username" class="input-group">Username: </label>
+      <input
+        type="text"
+        placeholder="Username"
+        name="username"
+        formControlName="username"
+        required
+      />
+
+      @let username = loginFormGroup.get('username');
+      @if ((username?.dirty && username?.invalid) || message) {
+        <div class="error">* Username is Mandatory</div>
+      }
+    </div>
+
+    <div class="input-group">
+      <label for="password" class="input-group">Password: </label>
+      <input
+        type="password"
+        placeholder="Password"
+        name="password"
+        formControlName="password"
+        required
+      />
+
+      @let password = loginFormGroup.get('password');
+      @if ((password?.dirty && password?.invalid) || message) {
+        <div class="error">* Password is Mandatory</div>
+      }
+    </div>
+    <div class="row justify-center">
+      <button
+        class="bg-blue-600 rounded p-2 mt-3 disabled:opacity-50 cursor-pointer"
+        [disabled]="loginFormGroup.invalid"
+      >
+        Login
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,44 @@
+<h3>{{ message }}</h3>
+<div class="form-group mt-3">
+  <form (ngSubmit)="register()" [formGroup]="registerForm">
+    <div class="input-group">
+      <label for="username" class="input-group">Username: </label>
+      <input
+        type="text"
+        placeholder="Username"
+        name="username"
+        formControlName="username"
+        required
+      />
+
+      @let username = registerForm.get('username');
+      @if ((username?.dirty && username?.invalid) || message) {
+        <div class="error text-red-300">* Username is Mandatory</div>
+      }
+    </div>
+
+    <div class="input-group">
+      <label for="password" class="input-group">Password: </label>
+      <input
+        type="password"
+        placeholder="Password"
+        name="password"
+        formControlName="password"
+        required
+      />
+
+      @let password = registerForm.get('password');
+      @if ((password?.dirty && password?.invalid) || message) {
+        <div class="error text-red-300">* Password is Mandatory</div>
+      }
+    </div>
+    <div class="row justify-center">
+      <button
+        class="bg-blue-600 rounded p-2 mt-3 disabled:opacity-50 cursor-pointer"
+        [disabled]="registerForm.invalid"
+      >
+        Register
+      </button>
+    </div>
+  </form>
+</div>
