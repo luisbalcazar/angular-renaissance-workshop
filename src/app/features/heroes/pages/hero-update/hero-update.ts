@@ -15,6 +15,7 @@ import { HeroForm } from '../../components/hero-form/hero-form';
 import { HeroItemNotFound } from '../../components/hero-item-not-found/hero-item-not-found';
 import { HeroInterface } from '../../interfaces/hero.interface';
 import { Hero } from '../../services/hero';
+import { HEROES_PAGES } from '../../heroes.routes';
 
 @Component({
   selector: 'app-hero-update',
@@ -83,7 +84,7 @@ export class HeroUpdate {
       !this.heroService.isDefaultHero(this.heroSignal()) &&
       this.isHeroResourceUpdateCompleted()
     ) {
-      this.routerService.navigate(['/home']);
+      this.routerService.navigate([HEROES_PAGES.HERO, HEROES_PAGES.HOME]);
     }
   });
 
@@ -97,7 +98,7 @@ export class HeroUpdate {
   }
 
   canDeactivate() {
-    if (this.heroForm()) {
+    if (this.heroForm().isPendingSave()) {
       return confirm('You have unsaved changes. Do you really want to leave?');
     }
     return true;

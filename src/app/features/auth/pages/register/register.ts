@@ -6,6 +6,7 @@ import { RegisterForm } from '../../components/register-form/register-form';
 import { of } from 'rxjs';
 import { AuthLogin } from '../../interfaces/auth-login.interface';
 import { AuthService } from '../../services/auth.service';
+import { AUTH_PAGES } from '../../auth.routes';
 
 @Component({
   selector: 'app-register',
@@ -61,7 +62,7 @@ export class Register {
 
     if (value) {
       queueMicrotask(() => {
-        this.router.navigate(['/login']);
+        this.router.navigate([AUTH_PAGES.AUTH, AUTH_PAGES.LOGIN]);
       });
     }
   });

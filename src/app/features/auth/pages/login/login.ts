@@ -6,6 +6,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { LoginForm } from '../../components/login-form/login-form';
 import { AuthLogin } from '../../interfaces/auth-login.interface';
 import { AuthService } from '../../services/auth.service';
+import { HEROES_PAGES } from '../../../heroes/heroes.routes';
 
 @Component({
   selector: 'app-login',
@@ -62,9 +63,7 @@ export class Login {
     const value = this.loginResource.value();
 
     if (value) {
-      queueMicrotask(() => {
-        this.router.navigate(['/home']);
-      });
+      this.router.navigate([HEROES_PAGES.HERO, HEROES_PAGES.HOME]);
     }
   });
 

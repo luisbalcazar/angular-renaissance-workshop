@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { heroIdMatcher } from './matchers/hero-id.matcher';
 import { heroResolver } from './guards/hero.resolver';
+import { heroUnsavedChangesGuard } from './guards/hero-unsaved-changes-guard';
 
 export enum HEROES_PAGES {
   HERO = '/hero',
@@ -30,7 +31,7 @@ export const HEROES_ROUTES: Routes = [
         path: `${HEROES_PAGES.UPDATE}/:id`,
         loadComponent: () => import('./pages/hero-update/hero-update').then((c) => c.HeroUpdate),
         resolve: { hero: heroResolver },
-        /* TODO 834: Use the guard `features/heroes/guards/hero-unsaved-changes.guard.ts` for the route associated with updating heroes. */
+        canDeactivate: [heroUnsavedChangesGuard],
       },
       {
         loadComponent: () => import('./pages/hero-detail/hero-detail').then((c) => c.HeroDetail),

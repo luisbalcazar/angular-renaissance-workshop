@@ -1,4 +1,4 @@
-import { Component, inject, input, output, Signal, computed } from '@angular/core';
+import { Component, inject, input, output, Signal, computed, signal } from '@angular/core';
 import { FormBuilder, Validators, ReactiveFormsModule, FormGroup } from '@angular/forms';
 import { TitleCasePipe } from '@angular/common';
 import { HeroInterface } from '../../interfaces/hero.interface';
@@ -27,7 +27,8 @@ export class HeroForm {
   //Signals
   hero = input<HeroInterface>(this.heroService.defaultHero);
   add = output<HeroInterface>({ alias: 'sendHero' });
-  isPendingSave = computed(() => this.heroForm().pending);
+  isSubmitted = signal(false);
+  isPendingSave = computed(() => !this.isSubmitted && this.heroForm().pending);
   sendFormButton = computed(() => {
     return this.heroService.isDefaultHero(this.hero()) ? 'Create' : 'Update';
   });
@@ -74,6 +75,7 @@ export class HeroForm {
         ...this.heroForm().value,
         powerstats: { ...this.heroForm().value.powerstats },
       };
+      this.isSubmitted.set(true);
       this.add.emit(hero);
     }
   }
