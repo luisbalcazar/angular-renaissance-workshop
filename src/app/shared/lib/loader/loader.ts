@@ -9,6 +9,7 @@ import { LoaderService } from './loader.service';
     </div>
   }`,
   styles: `
+    @reference "tailwindcss";
     .loader {
       @apply w-20 h-20 border-8 border-gray-300 rounded-full border-t-blue-600 animate-spin;
     }
